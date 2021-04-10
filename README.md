@@ -78,7 +78,7 @@ The API should have the following capabilities:
 **Status**: 200
 
 ---
-***Add a new comment / reply***
+***Add a new comment***
 
 **Type**: POST
 
@@ -131,11 +131,10 @@ The API should have the following capabilities:
 ****Delete an existing comment****
 
 **Type**: DELETE
-
+    
 **Url**: /delete-message/<message_id>
  
 **Response Data**:
 
     None 
 **Status**: 204/404
-
