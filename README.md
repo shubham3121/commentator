@@ -130,7 +130,7 @@ The API should have the following capabilities:
 ---
 ****Delete an existing comment****
 
-**Type**: PUT
+**Type**: DELETE
 
 **Url**: /delete-message/<message_id>
  
