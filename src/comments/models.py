@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models, transaction
-from django.db.models import F
 from django.utils import timezone
 
 PATH_SEPARATOR = ","
@@ -20,6 +19,9 @@ class Comment(models.Model):
 
     """
 
+    # id of the post to which the comment is attached.
+    post_id = models.PositiveIntegerField(db_index=True, null=False, blank=False)
+
     # author of the comment
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -27,10 +29,10 @@ class Comment(models.Model):
     message = models.TextField(null=True, blank=True)
 
     # when the comment was created
-    creation_date = models.DateTimeField(auto_now_add=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True, blank=True)
 
     # when the comment was updated
-    updated_date = models.DateTimeField(auto_now_add=True, blank=True)
+    updated_on = models.DateTimeField(auto_now_add=True, blank=True)
 
     # reference to the parent node of the comment
     parent = models.ForeignKey(
@@ -42,11 +44,11 @@ class Comment(models.Model):
         "self", null=True, blank=True, on_delete=models.SET_NULL
     )
 
-    # path to traverse to get the comments as a flat list
+    # path for traversing the comments as a flat list
     tree_path = models.CharField(max_length=500, editable=False)
 
     def __repr__(self):
-        return f"<Comment<{self.pk}>: {self.message[:10]}>"
+        return f"<Comment<{self.pk}>: {self.message[:15]}>"
 
     @property
     def root_id(self):
@@ -62,7 +64,7 @@ class Comment(models.Model):
         is_new = not self.pk
 
         if is_new:
-            self.created = timezone.now()
+            self.created_on = timezone.now()
         super(Comment, self).save(*args, **kwargs)
 
         # If a new comment
@@ -72,13 +74,13 @@ class Comment(models.Model):
                 tree_path = PATH_SEPARATOR.join((self.parent.tree_path, tree_path))
                 self.parent.last_child = self
                 Comment.objects.filter(pk=self.parent_id).update(
-                    last_child=self.id, updated_date=self.creation_date
+                    last_child=self.id, updated_on=self.created_on
                 )
 
             self.tree_path = tree_path
-            self.updated_date = self.creation_date
+            self.updated_on = self.created_on
         else:
-            self.updated_date = timezone.now()
+            self.updated_on = timezone.now()
 
     @transaction.atomic
     def delete(self, *args, **kwargs):
@@ -86,17 +88,20 @@ class Comment(models.Model):
             prev_child = (
                 Comment.objects.filter(parent=self.parent_id)
                 .exclude(pk=self.pk)
-                .order_by("-creation_date")
+                .order_by("-created_on")
                 .first()
             )
 
             if prev_child:
                 Comment.objects.filter(pk=self.parent_id).update(
-                    last_child=prev_child, updated_date=prev_child.creation_date
+                    last_child=prev_child, updated_on=prev_child.created_on
                 )
             else:
                 Comment.objects.filter(pk=self.parent_id).update(
-                    last_child=None, updated_date=self.parent.creation_date
+                    last_child=None, updated_on=self.parent.created_on
                 )
 
         super(Comment, self).delete(*args, **kwargs)
+
+    class Meta:
+        ordering = ("tree_path",)
