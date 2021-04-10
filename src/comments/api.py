@@ -100,7 +100,9 @@ class CommentsAPIView(APIView):
         if not post_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        # payload for the comment serializer.
+        # payload for the comment serializer. If parent_id is present then
+        # the message is a reply to an existing comment, otherwise its a new
+        # comment to the post.
         data = {
             "message": message_body.get("message"),
             "author_id": user.id,
@@ -182,7 +184,8 @@ class CommentsAPIView(APIView):
         if not comment:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        # If comment is found, then delete it.
+        # If comment is found, then delete it. Deleting a comment will also
+        # delete all the replies attached to it.
         comment.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
