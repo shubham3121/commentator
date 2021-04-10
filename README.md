@@ -9,7 +9,7 @@ The API should have the following capabilities:
 4. Edit an existing comment.
 5. Delete a single comment or an entire comment thread using the comment's identifier.
 
-####Entities
+#### Entities
 - User
 - Comment
 
@@ -52,7 +52,7 @@ The API should have the following capabilities:
                 },
                 "replies": [
                     {
-                        "message_id": 5,
+                        "message_id": 2,
                         "author": {
                             "author_id": 2,
                             "first_name": "",
@@ -61,14 +61,14 @@ The API should have the following capabilities:
                         },
                         "replies": [],
                         "post_id": 1,
-                        "message": "First Chain Update",
+                        "message": "Reply",
                         "created_on": "2021-04-10T13:56:32.260205Z",
                         "updated_on": "2021-04-10T13:56:32.260301Z",
                         "parent_id": 1
                     }
                 ],
                 "post_id": 1,
-                "message": "Again Update",
+                "message": "Message",
                 "created_on": "2021-04-10T12:52:29.680232Z",
                 "updated_on": "2021-04-10T13:56:32.260205Z",
                 "parent_id": null
@@ -92,9 +92,9 @@ The API should have the following capabilities:
     “parent_id”: “”,
     }
 
-**Response Data**: 
+**Sample Response Data**: 
 
-    {“message”: “”, “post_id”: “”}
+    {“message”: “Message”, “post_id”: 1}
 
 **Status**: 201/400
 
@@ -110,9 +110,19 @@ The API should have the following capabilities:
     “message”: “”
     }
  
-**Response Data**: 
+**Sample Response Data**: 
 
-    None
+    {
+    "post_id": 1,
+    "author_id": 1,
+    "message": "Update Message",
+    "created_on": "2021-04-10T13:56:32.260205Z",
+    "updated_on": "2021-04-10T14:12:18.729563Z",
+    "parent_id": 1,
+    "last_child_id": null,
+    "id": 1
+    }
+
  
 **Status**: 204/404
 
