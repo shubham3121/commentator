@@ -5,6 +5,8 @@ from .models import Comment
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    """Serializer for fetching details of a User."""
+
     author_id = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -13,12 +15,19 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_author_id(user):
+        """
+        Args:
+             user (User): user instance.
+        Returns:
+            int: user id.
+        """
         return user.id
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
+    """Serializer for fetching, editing and updating details of a comment."""
 
+    class Meta:
         model = Comment
         fields = (
             "post_id",
@@ -38,6 +47,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ThreadedCommentSerializer(serializers.ModelSerializer):
+    """Serializer for rendering a comment and its replies as a threaded structure."""
 
     author = serializers.SerializerMethodField(read_only=True, required=False)
     message_id = serializers.SerializerMethodField(read_only=True, required=False)
@@ -59,14 +69,32 @@ class ThreadedCommentSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_message_id(comment):
+        """
+        Args:
+             comment (Comment): comment instance.
+        Returns:
+            int: comment id.
+        """
         return comment.id
 
     @staticmethod
     def get_author(comment):
+        """
+        Args:
+             comment (Comment): comment instance.
+        Returns:
+            dict: details of the author of the comment.
+        """
         return UserDetailSerializer(comment.author).data
 
     @staticmethod
     def get_replies(comment):
+        """
+        Args:
+             comment (Comment): comment instance.
+        Returns:
+            list: replies to the comment instance.
+        """
         replies = []
         for child in comment.children.all():
             replies.append(ThreadedCommentSerializer(child).data)
