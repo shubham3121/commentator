@@ -37,7 +37,7 @@ The API should have the following capabilities:
 
 **Url**: /<post_id>/comments/
 
-**Response Data**: 
+**Sample Response Data**: 
 
     {
         "post_id": 1,
@@ -76,8 +76,8 @@ The API should have the following capabilities:
         ]
     }
 **Status**: 200
----
 
+---
 ***Add a new comment / reply***
 
 **Type**: POST
@@ -99,7 +99,8 @@ The API should have the following capabilities:
 **Status**: 201/400
 
 ---
-***Edit an existing comment***
+****Edit an existing comment****
+
 **Type**: PATCH
 
 **Url**: /edit-message/<message_id>
